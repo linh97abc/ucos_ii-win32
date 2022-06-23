@@ -4,6 +4,7 @@ CONFIG_UCOSII_WIN32 := 1
 
 inc_1 := 
 src_1 :=
+def_1 :=
 
 -include $(UCOSII_BASE)/subdir.mk
 
@@ -11,16 +12,19 @@ src_1 :=
 
 SRC := $(src_1)
 INC := $(inc_1)
+DEF := $(def_1)
 
 SRC += hello_ucosii.c
 
 OBJ := $(SRC:%=build/%.o)
 APP_INC := $(INC:%=-I%)
 
+EXE := main.exe
+
 CC := gcc
 APP_CFLAGS := -g
-APP_CFLAGS += $(APP_INC)
-LINK := gcc
+APP_CFLAGS += $(APP_INC) $(DEF:%=-D%)
+LINK := g++
 LINK_FLAG := -g
 ECHO := echo
 MKDIR := mkdir -p
@@ -38,9 +42,37 @@ endef
 build/%.c.o: %.c
 	$(compile_c)
 
-all: ${OBJ}
-	$(LINK) $(LINK_FLAG) -o main.exe ${OBJ} ${LIB}
+build/%.cc.o: %.cc
+	$(compile_cpp)
+
+build/%.cpp.o: %.cpp
+	$(compile_cpp)
+
+build/%.cxx.o: %.cpp
+	$(compile_cpp)
+
+.PHONY : all
+
+all:
+	@$(ECHO) $(EXE) Build complete
+
+all: $(EXE)
+
+# Create list of dependancy files for each object file.
+APP_DEPS := $(OBJ:.o=.d)
+
+# Include the dependency files unless the make goal is performing a clean
+# of the application.
+ifneq ($(firstword $(MAKECMDGOALS)),clean)
+ifneq ($(firstword $(MAKECMDGOALS)),clean_all)
+-include $(APP_DEPS)
+endif
+endif
+
+$(EXE): ${OBJ}
+	@$(ECHO) Info: Linking $@
+	$(LINK) $(LINK_FLAG) -o $(EXE) ${OBJ} ${LIB}
 
 clean:
 	@rm -rf build
-	@rm -rf main.exe
+	@rm -rf $(EXE)

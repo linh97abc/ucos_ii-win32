@@ -1,3 +1,4 @@
+def_$(CONFIG_UCOSII) += __ucosii__
 inc_$(CONFIG_UCOSII) += $(UCOSII_BASE)/inc
 
 ifneq ($(CONFIG_UCOSII), 1)
