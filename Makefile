@@ -1,20 +1,25 @@
-SRC := UCOSII/port-win32/os_cpu.c UCOSII/port-win32/os_hook.c
-# SRC += $(wildcard UCOSII/port-win32/*.c)
+UCOSII_BASE := UCOSII
+CONFIG_UCOSII := 1
+CONFIG_UCOSII_WIN32 := 1
 
-KERNEL_SRC:=os_core.c  os_flag.c  os_mem.c    os_q.c    os_task.c  os_tmr.c\
-	os_dbg.c   os_mbox.c  os_mutex.c  os_sem.c  os_time.c
+inc_1 := 
+src_1 :=
 
-SRC += $(KERNEL_SRC:%.c=UCOSII/src/%.c)
-# SRC += $(KERNEL_SRC:%.c=Source/%.c)
+-include $(UCOSII_BASE)/subdir.mk
 
-SRC += test/hello_ucosii.c
 
-OBJ := $(SRC:%.c=build/%.o)
+
+SRC := $(src_1)
+INC := $(inc_1)
+
+SRC += hello_ucosii.c
+
+OBJ := $(SRC:%=build/%.o)
+APP_INC := $(INC:%=-I%)
 
 CC := gcc
-APP_CFLAGS := -IUCOSII/port-win32 -g
-# APP_CFLAGS += -ISource
-APP_CFLAGS += -IUCOSII/inc
+APP_CFLAGS := -g
+APP_CFLAGS += $(APP_INC)
 LINK := gcc
 LINK_FLAG := -g
 ECHO := echo
@@ -30,7 +35,7 @@ $(CC) -MP -MMD -c $(APP_CFLAGS) -o $@ $<
 $(CC_POST_PROCESS)
 endef
 
-build/%.o: %.c UCOSII/inc/os_cfg.h
+build/%.c.o: %.c
 	$(compile_c)
 
 all: ${OBJ}
@@ -38,3 +43,4 @@ all: ${OBJ}
 
 clean:
 	@rm -rf build
+	@rm -rf main.exe
