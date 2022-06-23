@@ -24,7 +24,8 @@ EXE := main.exe
 
 CC := gcc
 CPP := g++
-APP_CFLAGS := -g
+CPPFLAG := -std=c++11
+APP_CFLAGS := -g -O0
 APP_CFLAGS += $(APP_INC) $(DEF:%=-D%)
 LINK := g++
 LINK_FLAG := -g
