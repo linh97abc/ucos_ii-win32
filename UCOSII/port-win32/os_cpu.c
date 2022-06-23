@@ -397,14 +397,26 @@ void OSEnableInterruptFlag(OS_CPU_SR *pCpu_Sr)
 }
 /*-----------------------------------------------------------*/
 
+#if OS_TMR_EN > 0
+static  INT16U  OSTmrCtr;
+#endif
+
 void OSInitHookBegin(void)
 {
-
+#if OS_TMR_EN > 0
+    OSTmrCtr = 0;
+#endif
 }
 
 void OSTimeTickHook(void)
 {
-
+#if OS_TMR_EN > 0
+    OSTmrCtr++;
+    if (OSTmrCtr >= (OS_TICKS_PER_SEC / OS_TMR_CFG_TICKS_PER_SEC)) {
+        OSTmrCtr = 0;
+        OSTmrSignal();
+    }
+#endif 
 }
 
 void OSTaskIdleHook(void)
