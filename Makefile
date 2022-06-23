@@ -2,19 +2,20 @@ UCOSII_BASE := UCOSII
 CONFIG_UCOSII := 1
 CONFIG_UCOSII_WIN32 := 1
 
+APP_BASE := osal
+
 inc_1 := 
 src_1 :=
 def_1 :=
 
 -include $(UCOSII_BASE)/subdir.mk
 
-
+##app
+-include $(APP_BASE)/subdir.mk
 
 SRC := $(src_1)
 INC := $(inc_1)
 DEF := $(def_1)
-
-SRC += hello_ucosii.c
 
 OBJ := $(SRC:%=build/%.o)
 APP_INC := $(INC:%=-I%)
@@ -22,6 +23,7 @@ APP_INC := $(INC:%=-I%)
 EXE := main.exe
 
 CC := gcc
+CPP := g++
 APP_CFLAGS := -g
 APP_CFLAGS += $(APP_INC) $(DEF:%=-D%)
 LINK := g++
@@ -37,6 +39,13 @@ define compile_c
 @$(MKDIR) $(@D)
 $(CC) -MP -MMD -c $(APP_CFLAGS) -o $@ $<
 $(CC_POST_PROCESS)
+endef
+
+define compile_cpp
+@$(ECHO) Info: Compiling $< to $@
+@$(MKDIR) $(@D)
+$(CPP) -MP -MMD -c $(APP_CFLAGS) $(CPPFLAG) -o $@ $<
+$(CPP_POST_PROCESS)
 endef
 
 build/%.c.o: %.c
