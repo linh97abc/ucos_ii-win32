@@ -130,7 +130,7 @@ extern "C"
 #define OS_TMR_CFG_NAME_SIZE 16
 #define OS_TMR_CFG_TICKS_PER_SEC 10
 #define OS_TMR_CFG_WHEEL_SIZE 2
-#define OS_TMR_EN 0
+#define OS_TMR_EN 1
 
 #ifdef __cplusplus
 }

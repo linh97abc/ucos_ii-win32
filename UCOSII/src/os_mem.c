@@ -14,7 +14,7 @@
 * LICENSING TERMS:
 * ---------------
 *   uC/OS-II is provided in source form for FREE evaluation, for educational use or for peaceful research.  
-* If you plan on using  uC/OS-II  in a commercial product you need to contact Micriµm to properly license 
+* If you plan on using  uC/OS-II  in a commercial product you need to contact Micriï¿½m to properly license 
 * its use in your product. We provide ALL the source code for your convenience and to help you experience 
 * uC/OS-II.   The fact that the  source is provided does  NOT  mean that you can use it without  paying a 
 * licensing fee.
@@ -24,6 +24,7 @@
 #ifndef  OS_MASTER_FILE
 #include <ucos_ii.h>
 #endif
+#include <stdint.h>
 
 #if (OS_MEM_EN > 0) && (OS_MAX_MEM_PART > 0)
 /*
@@ -76,7 +77,7 @@ OS_MEM  *OSMemCreate (void *addr, INT32U nblks, INT32U blksize, INT8U *perr)
         *perr = OS_ERR_MEM_INVALID_ADDR;
         return ((OS_MEM *)0);
     }
-    if (((INT32U)addr & (sizeof(void *) - 1)) != 0){  /* Must be pointer size aligned                  */
+    if (((uintptr_t)addr & (sizeof(void *) - 1)) != 0){  /* Must be pointer size aligned                  */
         *perr = OS_ERR_MEM_INVALID_ADDR;
         return ((OS_MEM *)0);
     }
@@ -100,11 +101,11 @@ OS_MEM  *OSMemCreate (void *addr, INT32U nblks, INT32U blksize, INT8U *perr)
         return ((OS_MEM *)0);
     }
     plink = (void **)addr;                            /* Create linked list of free memory blocks      */
-    pblk  = (INT8U *)((INT32U)addr + blksize);
+    pblk  = (INT8U *)((uintptr_t)addr + blksize);
     for (i = 0; i < (nblks - 1); i++) {
        *plink = (void *)pblk;                         /* Save pointer to NEXT block in CURRENT block   */
         plink = (void **)pblk;                        /* Position to  NEXT      block                  */
-        pblk  = (INT8U *)((INT32U)pblk + blksize);    /* Point to the FOLLOWING block                  */
+        pblk  = (INT8U *)((uintptr_t)pblk + blksize);    /* Point to the FOLLOWING block                  */
     }
     *plink              = (void *)0;                  /* Last memory block points to NULL              */
     pmem->OSMemAddr     = addr;                       /* Store start address of memory partition       */
